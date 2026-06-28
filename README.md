@@ -1,18 +1,8 @@
-# 🍛 Saffron Table — Artisan Food & Dining Website
+ 🍛 Saffron Table — Artisan Food & Dining Website
 
-A fully responsive restaurant website with a functional cart system, category-based menu filtering, and smooth multi-page navigation — all built as a **single HTML file** with zero dependencies.
+ A fully responsive restaurant website with a functional cart system, category-based menu filtering, and smooth multi-page navigation — all built as a **single HTML file** with zero dependencies.
 
-> 💡 **100% human-made** — designed and coded from scratch by Jothi as a web development final project.
-
----
-
-## 🌐 Live Preview
-
-> _Add your GitHub Pages / Netlify link here_
-
----
-
-## ✨ Features
+✨ Features
 
 - **Multi-page SPA** — Home, Menu, About, and Contact pages with smooth JS-based switching
 - **Dynamic Menu** — Filter dishes by category: Starters, Mains, Pizza, Desserts, Drinks
@@ -25,9 +15,9 @@ A fully responsive restaurant website with a functional cart system, category-ba
 - **Veg / Non-Veg Labels** — Green 🟢 / Red 🔴 indicators on every dish card
 - **Scroll-aware Navbar** — Shadow effect triggers on scroll
 
----
 
-## 🛠️ Tech Stack
+
+ 🛠️ Tech Stack
 
 | Layer      | Technology                          |
 |------------|-------------------------------------|
@@ -38,9 +28,7 @@ A fully responsive restaurant website with a functional cart system, category-ba
 | Storage    | localStorage (cart persistence)     |
 | Hosting    | GitHub Pages / Netlify _(recommended)_ |
 
----
-
-## 🎨 Color Palette
+🎨 Color Palette
 
 | Name       | Hex       | Usage                        |
 |------------|-----------|------------------------------|
@@ -50,9 +38,9 @@ A fully responsive restaurant website with a functional cart system, category-ba
 | Charcoal   | `#1C1C1C` | Body text                    |
 | Sage       | `#7A8C6E` | Category labels              |
 
----
 
-## 🧠 What I Learned Building This
+
+ 🧠 What I Learned Building This
 
 - Structuring a multi-page experience inside a single HTML file using JS page switching
 - Managing state (cart items, quantities) with localStorage
@@ -60,18 +48,15 @@ A fully responsive restaurant website with a functional cart system, category-ba
 - Writing clean, reusable CSS using custom properties (variables)
 - Making a fully responsive layout without any CSS framework
 
----
 
-## 📁 Project Structure
+📁 Project Structure
 
 ```
 saffron-table/
 └── saffron-table.html   # Entire project — HTML + CSS + JS in one file
 ```
 
----
-
-## 🚀 Getting Started
+ 🚀 Getting Started
 
 No installs or setup needed!
 
@@ -89,23 +74,19 @@ No installs or setup needed!
 
 Runs directly in any browser. ✅
 
----
+ 🌍 Deployment
 
-## 🌍 Deployment
-
-### GitHub Pages (Free)
+ GitHub Pages (Free)
 1. Push the file to a GitHub repo
 2. Go to **Settings → Pages**
 3. Set source to `main` branch → `/ (root)`
-4. Live at `https://jothi121005.github.io/saffron-table/saffron-table.html`
+4. Live at `https://joshuak2005.github.io/saffron-table/saffron-table.html`
 
-### Netlify (Free)
+ Netlify (Free)
 1. Drag and drop the HTML file at [netlify.com/drop](https://app.netlify.com/drop)
 2. Instant live URL — no account needed!
 
----
-
-## 📄 Pages Overview
+ 📄 Pages Overview
 
 | Page    | Description                                               |
 |---------|-----------------------------------------------------------|
@@ -114,17 +95,7 @@ Runs directly in any browser. ✅
 | About   | Brand story, team section, core values                    |
 | Contact | Contact form + address, phone, email info                 |
 
----
-
-## 👨‍💻 Author
-
-**Jothi** — Web Development Intern  
-idThirdeye Technology Solutions  
+ 
 GitHub: [@joshuak2005](https://github.com/joshuak2005)
 
----
 
-## 📄 License
-
-Built as a web development course final project.  
-Feel free to use it as a reference or learning resource.
