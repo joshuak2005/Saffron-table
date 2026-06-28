@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Saffron Table — Artisan Food & Dining</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --burgundy: #5C1A1A;
+    --burgundy-light: #7a2424;
+    --cream: #FDF6EC;
+    --cream-dark: #F5EADA;
+    --gold: #E8A020;
+    --gold-light: #f0b84a;
+    --charcoal: #1C1C1C;
+    --sage: #7A8C6E;
+    --white: #ffffff;
+    --shadow: rgba(92,26,26,0.12);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--charcoal); overflow-x: hidden; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 4rem;
+    background: rgba(253,246,236,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(232,160,32,0.2);
+    transition: box-shadow 0.3s;
+  }
+  nav.scrolled { box-shadow: 0 4px 30px var(--shadow); }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--burgundy); text-decoration: none; letter-spacing: -0.02em; }
+  .nav-logo span { color: var(--gold); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a { text-decoration: none; font-size: 0.9rem; font-weight: 500; color: var(--charcoal); letter-spacing: 0.04em; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--burgundy); }
+  .nav-right { display: flex; align-items: center; gap: 1.2rem; }
+  .cart-btn {
+    position: relative; background: var(--burgundy); color: var(--cream); border: none;
+    padding: 0.6rem 1.4rem; border-radius: 50px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 600;
+    display: flex; align-items: center; gap: 0.5rem; transition: background 0.2s;
+  }
+  .cart-btn:hover { background: var(--burgundy-light); }
+  .cart-count {
+    background: var(--gold); color: var(--charcoal); border-radius: 50%;
+    width: 18px; height: 18px; font-size: 0.72rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+  .hamburger span { width: 24px; height: 2px; background: var(--charcoal); transition: all 0.3s; }
+
+  /* ─── PAGES ─── */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: block; }
+
+  /* ─── HOME HERO ─── */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center;
+    background: linear-gradient(135deg, var(--burgundy) 0%, #3a0f0f 100%);
+    position: relative; overflow: hidden; padding-top: 80px;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1400&q=80') center/cover no-repeat;
+    opacity: 0.18; animation: heroZoom 20s ease-in-out infinite alternate;
+  }
+  @keyframes heroZoom { from { transform: scale(1); } to { transform: scale(1.08); } }
+  .hero-content { position: relative; z-index: 2; max-width: 700px; padding: 0 4rem; }
+  .hero-eyebrow { color: var(--gold); font-size: 0.8rem; letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; margin-bottom: 1.2rem; }
+  .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(2.8rem, 6vw, 5rem); color: var(--white); line-height: 1.1; margin-bottom: 1.5rem; }
+  .hero-title em { color: var(--gold); font-style: italic; }
+  .hero-sub { color: rgba(255,255,255,0.75); font-size: 1.1rem; line-height: 1.7; margin-bottom: 2.5rem; max-width: 480px; }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary { background: var(--gold); color: var(--charcoal); border: none; padding: 0.9rem 2.2rem; border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-block; }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,160,32,0.4); }
+  .btn-outline { background: transparent; color: var(--white); border: 2px solid rgba(255,255,255,0.4); padding: 0.9rem 2.2rem; border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-outline:hover { border-color: var(--white); background: rgba(255,255,255,0.1); }
+  .hero-stats { position: absolute; bottom: 3rem; right: 4rem; z-index: 2; display: flex; gap: 3rem; }
+  .stat-item { text-align: center; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--gold); font-weight: 700; }
+  .stat-label { font-size: 0.75rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  /* ─── SECTIONS ─── */
+  section { padding: 5rem 4rem; }
+  .section-eyebrow { color: var(--gold); font-size: 0.78rem; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 600; margin-bottom: 0.8rem; text-align: center; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem); color: var(--burgundy); text-align: center; margin-bottom: 1rem; }
+  .section-sub { color: #666; font-size: 1rem; text-align: center; max-width: 520px; margin: 0 auto 3.5rem; line-height: 1.7; }
+
+  /* ─── CATEGORIES ─── */
+  .categories { background: var(--cream-dark); }
+  .cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.2rem; max-width: 900px; margin: 0 auto; }
+  .cat-card {
+    background: var(--white); border-radius: 20px; padding: 2rem 1rem;
+    text-align: center; cursor: pointer; transition: all 0.25s;
+    border: 2px solid transparent;
+  }
+  .cat-card:hover, .cat-card.active { border-color: var(--gold); transform: translateY(-4px); box-shadow: 0 12px 32px var(--shadow); }
+  .cat-icon { font-size: 2.4rem; margin-bottom: 0.8rem; }
+  .cat-name { font-weight: 600; font-size: 0.9rem; color: var(--charcoal); }
+
+  /* ─── FEATURED DISHES ─── */
+  .dishes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
+  .dish-card {
+    background: var(--white); border-radius: 24px; overflow: hidden;
+    box-shadow: 0 4px 20px var(--shadow); transition: all 0.3s; position: relative;
+  }
+  .dish-card:hover { transform: translateY(-8px); box-shadow: 0 16px 40px rgba(92,26,26,0.16); }
+  .dish-img { width: 100%; height: 220px; object-fit: cover; display: block; }
+  .dish-img-placeholder {
+    width: 100%; height: 220px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 5rem;
+  }
+  .dish-badge {
+    position: absolute; top: 1rem; left: 1rem;
+    background: var(--gold); color: var(--charcoal); font-size: 0.72rem; font-weight: 700;
+    padding: 0.3rem 0.8rem; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .dish-body { padding: 1.5rem; }
+  .dish-category { font-size: 0.75rem; color: var(--sage); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.4rem; }
+  .dish-name { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--burgundy); margin-bottom: 0.5rem; }
+  .dish-desc { font-size: 0.88rem; color: #777; line-height: 1.6; margin-bottom: 1.2rem; }
+  .dish-footer { display: flex; align-items: center; justify-content: space-between; }
+  .dish-price { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--burgundy); font-weight: 700; }
+  .dish-price span { font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 400; color: #aaa; }
+  .add-btn {
+    background: var(--burgundy); color: var(--white); border: none;
+    width: 40px; height: 40px; border-radius: 50%; font-size: 1.4rem;
+    cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+  }
+  .add-btn:hover { background: var(--gold); color: var(--charcoal); transform: scale(1.1); }
+  .add-btn.added { background: var(--sage); }
+
+  /* ─── ABOUT STRIP ─── */
+  .about-strip { background: var(--burgundy); display: flex; align-items: center; gap: 5rem; padding: 5rem 4rem; flex-wrap: wrap; }
+  .about-strip-img { flex: 1; min-width: 280px; border-radius: 24px; overflow: hidden; height: 380px; background: linear-gradient(135deg,#7a2424,#3a0f0f); display: flex; align-items: center; justify-content: center; font-size: 8rem; }
+  .about-strip-text { flex: 1; min-width: 280px; }
+  .about-strip-text .section-eyebrow { text-align: left; }
+  .about-strip-text .section-title { text-align: left; color: var(--white); }
+  .about-strip-text p { color: rgba(255,255,255,0.75); line-height: 1.8; margin-bottom: 1.5rem; }
+  .feature-list { list-style: none; }
+  .feature-list li { color: rgba(255,255,255,0.85); font-size: 0.92rem; padding: 0.5rem 0; display: flex; align-items: center; gap: 0.8rem; }
+  .feature-list li::before { content: '✦'; color: var(--gold); font-size: 0.7rem; }
+
+  /* ─── TESTIMONIALS ─── */
+  .testimonials { background: var(--cream-dark); }
+  .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto; }
+  .testi-card { background: var(--white); border-radius: 20px; padding: 2rem; }
+  .testi-stars { color: var(--gold); font-size: 1rem; margin-bottom: 1rem; }
+  .testi-text { font-size: 0.95rem; line-height: 1.7; color: #555; margin-bottom: 1.5rem; font-style: italic; }
+  .testi-author { display: flex; align-items: center; gap: 0.8rem; }
+  .testi-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--burgundy); display: flex; align-items: center; justify-content: center; color: var(--white); font-weight: 700; font-size: 0.9rem; }
+  .testi-name { font-weight: 600; font-size: 0.9rem; }
+  .testi-role { font-size: 0.78rem; color: #aaa; }
+
+  /* ─── MENU PAGE ─── */
+  .menu-header { background: var(--burgundy); padding: 8rem 4rem 4rem; text-align: center; }
+  .menu-header h1 { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--white); }
+  .menu-header p { color: rgba(255,255,255,0.7); margin-top: 0.8rem; font-size: 1rem; }
+  .menu-filters { display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center; padding: 2.5rem 4rem; background: var(--cream-dark); }
+  .filter-btn { padding: 0.55rem 1.4rem; border-radius: 50px; border: 2px solid var(--burgundy); background: transparent; color: var(--burgundy); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .filter-btn.active, .filter-btn:hover { background: var(--burgundy); color: var(--white); }
+  .menu-grid { padding: 3rem 4rem 5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
+
+  /* ─── ABOUT PAGE ─── */
+  .about-hero { background: linear-gradient(135deg, var(--burgundy), #3a0f0f); padding: 8rem 4rem 5rem; text-align: center; }
+  .about-hero h1 { font-family: 'Playfair Display', serif; font-size: 3.2rem; color: var(--white); margin-bottom: 1rem; }
+  .about-hero p { color: rgba(255,255,255,0.75); font-size: 1.1rem; max-width: 560px; margin: 0 auto; line-height: 1.7; }
+  .about-story { padding: 5rem 4rem; max-width: 800px; margin: 0 auto; }
+  .about-story h2 { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--burgundy); margin-bottom: 1.5rem; }
+  .about-story p { color: #555; line-height: 1.9; margin-bottom: 1.2rem; }
+  .team-section { background: var(--cream-dark); padding: 5rem 4rem; }
+  .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; max-width: 900px; margin: 0 auto; }
+  .team-card { background: var(--white); border-radius: 20px; padding: 2rem; text-align: center; }
+  .team-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--burgundy); margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+  .team-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--burgundy); margin-bottom: 0.3rem; }
+  .team-role { font-size: 0.82rem; color: var(--sage); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+  .values-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; max-width: 1000px; margin: 3rem auto 0; }
+  .value-card { padding: 2rem; border-left: 4px solid var(--gold); }
+  .value-icon { font-size: 2rem; margin-bottom: 0.8rem; }
+  .value-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--burgundy); margin-bottom: 0.5rem; }
+  .value-text { font-size: 0.9rem; color: #666; line-height: 1.6; }
+
+  /* ─── CONTACT PAGE ─── */
+  .contact-header { background: var(--burgundy); padding: 8rem 4rem 4rem; text-align: center; }
+  .contact-header h1 { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--white); margin-bottom: 0.8rem; }
+  .contact-header p { color: rgba(255,255,255,0.7); }
+  .contact-body { display: flex; gap: 4rem; padding: 5rem 4rem; max-width: 1100px; margin: 0 auto; flex-wrap: wrap; }
+  .contact-info { flex: 1; min-width: 250px; }
+  .contact-info h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--burgundy); margin-bottom: 2rem; }
+  .info-item { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.8rem; }
+  .info-icon { font-size: 1.4rem; margin-top: 0.1rem; }
+  .info-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--sage); font-weight: 600; margin-bottom: 0.2rem; }
+  .info-val { font-size: 0.95rem; color: var(--charcoal); line-height: 1.5; }
+  .contact-form { flex: 1.5; min-width: 300px; }
+  .contact-form h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--burgundy); margin-bottom: 2rem; }
+  .form-row { display: flex; gap: 1rem; }
+  .form-group { flex: 1; margin-bottom: 1.2rem; }
+  .form-group label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--charcoal); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 0.85rem 1rem; border: 2px solid #e5e0d8;
+    border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+    background: var(--white); color: var(--charcoal); transition: border-color 0.2s; outline: none;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold); }
+  .form-group textarea { resize: vertical; min-height: 120px; }
+  .form-submit { background: var(--burgundy); color: var(--white); border: none; padding: 1rem 2.5rem; border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s; width: 100%; }
+  .form-submit:hover { background: var(--burgundy-light); transform: translateY(-2px); }
+
+  /* ─── CART DRAWER ─── */
+  .cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: none; opacity: 0; transition: opacity 0.3s; }
+  .cart-overlay.open { display: flex; justify-content: flex-end; opacity: 1; }
+  .cart-drawer {
+    background: var(--cream); width: 420px; max-width: 95vw; height: 100vh;
+    display: flex; flex-direction: column; transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: -8px 0 40px rgba(0,0,0,0.2);
+  }
+  .cart-overlay.open .cart-drawer { transform: translateX(0); }
+  .cart-head { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 2rem; border-bottom: 1px solid rgba(232,160,32,0.25); }
+  .cart-head h2 { font-family: 'Playfair Display', serif; color: var(--burgundy); font-size: 1.4rem; }
+  .cart-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #888; }
+  .cart-items { flex: 1; overflow-y: auto; padding: 1.5rem 2rem; }
+  .cart-empty { text-align: center; padding: 3rem 1rem; color: #aaa; }
+  .cart-empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .cart-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
+  .cart-item-icon { font-size: 2rem; width: 52px; height: 52px; background: var(--cream-dark); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .cart-item-info { flex: 1; }
+  .cart-item-name { font-weight: 600; font-size: 0.95rem; color: var(--charcoal); }
+  .cart-item-price { font-size: 0.85rem; color: var(--burgundy); font-weight: 600; }
+  .cart-item-qty { display: flex; align-items: center; gap: 0.6rem; }
+  .qty-btn { background: var(--cream-dark); border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 1rem; font-weight: 700; color: var(--burgundy); transition: background 0.2s; display: flex; align-items: center; justify-content: center; }
+  .qty-btn:hover { background: var(--gold); }
+  .qty-num { font-weight: 700; min-width: 20px; text-align: center; }
+  .cart-foot { padding: 1.5rem 2rem; border-top: 1px solid rgba(232,160,32,0.25); }
+  .cart-total { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; }
+  .cart-total-label { font-weight: 600; color: var(--charcoal); }
+  .cart-total-val { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--burgundy); }
+  .checkout-btn { background: var(--gold); color: var(--charcoal); border: none; padding: 1rem; border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.2s; }
+  .checkout-btn:hover { background: var(--gold-light); transform: translateY(-2px); }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--charcoal); color: var(--white);
+    padding: 0.85rem 1.8rem; border-radius: 50px; font-size: 0.9rem; font-weight: 500;
+    z-index: 3000; transition: transform 0.3s; white-space: nowrap;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast-icon { color: var(--gold); }
+
+  /* ─── FOOTER ─── */
+  footer { background: var(--charcoal); color: rgba(255,255,255,0.6); padding: 4rem; }
+  .footer-inner { display: flex; gap: 4rem; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; }
+  .footer-brand { flex: 2; min-width: 220px; }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--white); margin-bottom: 1rem; }
+  .footer-logo span { color: var(--gold); }
+  .footer-brand p { font-size: 0.9rem; line-height: 1.7; max-width: 300px; }
+  .footer-col { flex: 1; min-width: 140px; }
+  .footer-col h4 { color: var(--white); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 1.2rem; }
+  .footer-col a { display: block; color: rgba(255,255,255,0.55); text-decoration: none; font-size: 0.9rem; margin-bottom: 0.6rem; transition: color 0.2s; cursor: pointer; }
+  .footer-col a:hover { color: var(--gold); }
+  .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; text-align: center; font-size: 0.82rem; margin-top: 3rem; color: rgba(255,255,255,0.35); }
+
+  /* ─── ORDER SUCCESS ─── */
+  .order-success { display: none; position: fixed; inset: 0; z-index: 4000; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
+  .order-success.show { display: flex; }
+  .success-card { background: var(--white); border-radius: 24px; padding: 3rem; text-align: center; max-width: 400px; width: 90%; animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .success-icon { font-size: 4rem; margin-bottom: 1rem; }
+  .success-card h2 { font-family: 'Playfair Display', serif; color: var(--burgundy); font-size: 1.8rem; margin-bottom: 0.8rem; }
+  .success-card p { color: #666; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; }
+  .success-close { background: var(--burgundy); color: var(--white); border: none; padding: 0.8rem 2rem; border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .hero-content { padding: 0 1.5rem; }
+    .hero-stats { right: 1.5rem; gap: 1.5rem; }
+    section { padding: 4rem 1.5rem; }
+    .about-strip { padding: 4rem 1.5rem; gap: 2rem; }
+    .contact-body { padding: 3rem 1.5rem; gap: 2rem; }
+    .menu-grid, .menu-filters { padding: 2rem 1.5rem; }
+    footer { padding: 3rem 1.5rem; }
+    .form-row { flex-direction: column; }
+    .menu-header, .contact-header, .about-hero { padding: 7rem 1.5rem 3rem; }
+    .about-story { padding: 3rem 1.5rem; }
+    .team-section { padding: 3rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a class="nav-logo" href="#" onclick="showPage('home')">Saffron<span>Table</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" onclick="showPage('home')" class="active" id="nav-home">Home</a></li>
+    <li><a href="#" onclick="showPage('menu')" id="nav-menu">Menu</a></li>
+    <li><a href="#" onclick="showPage('about')" id="nav-about">About</a></li>
+    <li><a href="#" onclick="showPage('contact')" id="nav-contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="cart-btn" onclick="openCart()">
+      🛒 Cart
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+    <div class="hamburger" id="hamburger" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════ HOME PAGE ══════════ -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-content">
+      <p class="hero-eyebrow">✦ Fine Dining & Fresh Delivery</p>
+      <h1 class="hero-title">
+        Food made with<br><em>love & saffron</em>
+      </h1>
+      <p class="hero-sub">From our kitchen to your doorstep — handcrafted dishes using seasonal ingredients, time-honored recipes, and a pinch of passion.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="showPage('menu')">Explore Our Menu</button>
+        <button class="btn-outline" onclick="showPage('about')">Our Story</button>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">120+</div>
+        <div class="stat-label">Dishes</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">4.9★</div>
+        <div class="stat-label">Rating</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">8K+</div>
+        <div class="stat-label">Customers</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <section class="categories">
+    <p class="section-eyebrow">Browse By Category</p>
+    <h2 class="section-title">What are you craving?</h2>
+    <p class="section-sub">From morning bites to midnight feasts, we have something for every hunger.</p>
+    <div class="cat-grid">
+      <div class="cat-card active" onclick="selectCategory(this,'all')">
+        <div class="cat-icon">🍽️</div>
+        <div class="cat-name">All Items</div>
+      </div>
+      <div class="cat-card" onclick="selectCategory(this,'starters')">
+        <div class="cat-icon">🥗</div>
+        <div class="cat-name">Starters</div>
+      </div>
+      <div class="cat-card" onclick="selectCategory(this,'mains')">
+        <div class="cat-icon">🍛</div>
+        <div class="cat-name">Mains</div>
+      </div>
+      <div class="cat-card" onclick="selectCategory(this,'pizza')">
+        <div class="cat-icon">🍕</div>
+        <div class="cat-name">Pizza</div>
+      </div>
+      <div class="cat-card" onclick="selectCategory(this,'desserts')">
+        <div class="cat-icon">🍮</div>
+        <div class="cat-name">Desserts</div>
+      </div>
+      <div class="cat-card" onclick="selectCategory(this,'drinks')">
+        <div class="cat-icon">🥤</div>
+        <div class="cat-name">Drinks</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED DISHES -->
+  <section>
+    <p class="section-eyebrow">Chef's Selection</p>
+    <h2 class="section-title">Today's Highlights</h2>
+    <p class="section-sub">Our kitchen's most loved creations, made fresh every morning.</p>
+    <div class="dishes-grid" id="homeDishes"></div>
+    <div style="text-align:center;margin-top:3rem;">
+      <button class="btn-primary" onclick="showPage('menu')">View Full Menu</button>
+    </div>
+  </section>
+
+  <!-- ABOUT STRIP -->
+  <div class="about-strip">
+    <div class="about-strip-img">🍳</div>
+    <div class="about-strip-text">
+      <p class="section-eyebrow">Who We Are</p>
+      <h2 class="section-title">A kitchen rooted<br>in tradition</h2>
+      <p>Saffron Table was born in 2018 from a love of honest cooking. We source from local farms, prepare everything in-house, and believe that great food needs no shortcuts.</p>
+      <p>Every dish tells a story — of heritage, harvest, and the hands that made it.</p>
+      <ul class="feature-list">
+        <li>Locally sourced, seasonal ingredients</li>
+        <li>No artificial preservatives or flavors</li>
+        <li>30-minute delivery guarantee</li>
+        <li>Vegetarian & vegan options available</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials">
+    <p class="section-eyebrow">What People Say</p>
+    <h2 class="section-title">Loved by food lovers</h2>
+    <p class="section-sub">Don't take our word for it — hear from those who eat with us.</p>
+    <div class="testimonials-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"The butter chicken here is the best I've ever had. Warm, rich, and absolutely comforting. Delivery was quick and the packaging was gorgeous."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">AR</div>
+          <div><div class="testi-name">Arjun Rao</div><div class="testi-role">Regular Customer</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Finally a place that treats vegetarian food with the same respect as everything else. The paneer tikka masala is divine. Ordering again tonight!"</p>
+        <div class="testi-author">
+          <div class="testi-avatar">PM</div>
+          <div><div class="testi-name">Priya Menon</div><div class="testi-role">Food Blogger</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"I ordered for a family gathering and everyone was blown away. The desserts especially — that gulab jamun cheesecake is something else entirely."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">SK</div>
+          <div><div class="testi-name">Suresh Kumar</div><div class="testi-role">Loyal Member</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">Saffron<span>Table</span></div>
+        <p>Artisan food crafted with care, delivered to your door. Bringing the joy of a restaurant kitchen into your home.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigate</h4>
+        <a onclick="showPage('home')">Home</a>
+        <a onclick="showPage('menu')">Menu</a>
+        <a onclick="showPage('about')">About</a>
+        <a onclick="showPage('contact')">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Hours</h4>
+        <a>Mon – Fri: 10am – 10pm</a>
+        <a>Sat – Sun: 9am – 11pm</a>
+        <a>Public Holidays: 11am – 9pm</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a>📍 12 Spice Lane, Chennai</a>
+        <a>📞 +91 98765 43210</a>
+        <a>✉️ hello@safftontable.in</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2024 Saffron Table. All rights reserved. Crafted with ♥ for food lovers.</div>
+  </footer>
+</div>
+
+<!-- ══════════ MENU PAGE ══════════ -->
+<div class="page" id="page-menu">
+  <div class="menu-header">
+    <h1>Our Full Menu</h1>
+    <p>Every dish prepared fresh — no freezers, no shortcuts, just flavour.</p>
+  </div>
+  <div class="menu-filters" id="menuFilters">
+    <button class="filter-btn active" onclick="filterMenu(this,'all')">All</button>
+    <button class="filter-btn" onclick="filterMenu(this,'starters')">🥗 Starters</button>
+    <button class="filter-btn" onclick="filterMenu(this,'mains')">🍛 Mains</button>
+    <button class="filter-btn" onclick="filterMenu(this,'pizza')">🍕 Pizza</button>
+    <button class="filter-btn" onclick="filterMenu(this,'desserts')">🍮 Desserts</button>
+    <button class="filter-btn" onclick="filterMenu(this,'drinks')">🥤 Drinks</button>
+  </div>
+  <div class="menu-grid" id="menuGrid"></div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">Saffron<span>Table</span></div>
+        <p>Artisan food crafted with care, delivered to your door.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigate</h4>
+        <a onclick="showPage('home')">Home</a>
+        <a onclick="showPage('menu')">Menu</a>
+        <a onclick="showPage('about')">About</a>
+        <a onclick="showPage('contact')">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2024 Saffron Table. All rights reserved.</div>
+  </footer>
+</div>
+
+<!-- ══════════ ABOUT PAGE ══════════ -->
+<div class="page" id="page-about">
+  <div class="about-hero">
+    <h1>Our Story</h1>
+    <p>A humble kitchen, a bold vision, and an unwavering belief that food should make people feel at home.</p>
+  </div>
+
+  <div class="about-story">
+    <h2>From a small stove to your table</h2>
+    <p>Saffron Table began in 2018 when chef Lakshmi Iyer, after 15 years working in Michelin-starred kitchens abroad, returned to Chennai with a simple dream: to serve food that tasted like her grandmother's cooking but felt like a fine dining experience.</p>
+    <p>What started as a 12-seat restaurant in a rented garage has grown into one of the city's most beloved culinary destinations — but the heart of it has never changed. Every recipe is tested dozens of times. Every ingredient is tasted before it enters the kitchen. Every dish is plated as if it were going to a guest of honour.</p>
+    <p>We believe food is the most honest form of hospitality. When you eat with us, you are eating something that somebody poured themselves into — and we hope you taste that in every bite.</p>
+  </div>
+
+  <section>
+    <p class="section-eyebrow">Our Principles</p>
+    <h2 class="section-title">What we stand for</h2>
+    <div class="values-grid">
+      <div class="value-card">
+        <div class="value-icon">🌿</div>
+        <div class="value-title">Farm-Fresh Sourcing</div>
+        <p class="value-text">We partner with 14 local farms within 100km of our kitchen. No frozen produce. What's in season is on the menu.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">👩‍🍳</div>
+        <div class="value-title">Craft Over Convenience</div>
+        <p class="value-text">Our stocks are simmered for 12 hours. Our breads are slow-fermented. There are no shortcuts in this kitchen.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">♻️</div>
+        <div class="value-title">Zero Waste Kitchen</div>
+        <p class="value-text">Every vegetable peel has a purpose. All packaging is compostable. Sustainability isn't a marketing line here — it's a practice.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">❤️</div>
+        <div class="value-title">Community First</div>
+        <p class="value-text">We employ from local culinary schools, support food banks, and donate 1% of every order to hunger relief programs.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="team-section">
+    <p class="section-eyebrow">The People</p>
+    <h2 class="section-title">Meet our team</h2>
+    <p class="section-sub">The hands, minds, and hearts behind every plate.</p>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar">👩‍🍳</div>
+        <div class="team-name">Lakshmi Iyer</div>
+        <div class="team-role">Executive Chef & Founder</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">👨‍🍳</div>
+        <div class="team-name">Rajan Pillai</div>
+        <div class="team-role">Head Chef, Mains</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">👩‍🍰</div>
+        <div class="team-name">Meera Nair</div>
+        <div class="team-role">Pastry Chef</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">🧑‍🌾</div>
+        <div class="team-name">Dev Sharma</div>
+        <div class="team-role">Sourcing & Procurement</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">Saffron<span>Table</span></div>
+        <p>Artisan food crafted with care, delivered to your door.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigate</h4>
+        <a onclick="showPage('home')">Home</a>
+        <a onclick="showPage('menu')">Menu</a>
+        <a onclick="showPage('about')">About</a>
+        <a onclick="showPage('contact')">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2024 Saffron Table. All rights reserved.</div>
+  </footer>
+</div>
+
+<!-- ══════════ CONTACT PAGE ══════════ -->
+<div class="page" id="page-contact">
+  <div class="contact-header">
+    <h1>Get in Touch</h1>
+    <p>Questions, reservations, or just want to say hello — we're all ears.</p>
+  </div>
+
+  <div class="contact-body">
+    <div class="contact-info">
+      <h3>Find Us</h3>
+      <div class="info-item">
+        <div class="info-icon">📍</div>
+        <div>
+          <div class="info-label">Address</div>
+          <div class="info-val">12 Spice Lane, Nungambakkam<br>Chennai, Tamil Nadu 600034</div>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">📞</div>
+        <div>
+          <div class="info-label">Phone</div>
+          <div class="info-val">+91 98765 43210</div>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">✉️</div>
+        <div>
+          <div class="info-label">Email</div>
+          <div class="info-val">hello@saffrontable.in</div>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">🕐</div>
+        <div>
+          <div class="info-label">Opening Hours</div>
+          <div class="info-val">Mon–Fri: 10am – 10pm<br>Sat–Sun: 9am – 11pm</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-form">
+      <h3>Send a Message</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" placeholder="Arjun" id="cf-fname"/>
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" placeholder="Rao" id="cf-lname"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="arjun@email.com" id="cf-email"/>
+      </div>
+      <div class="form-group">
+        <label>Subject</label>
+        <select id="cf-subject">
+          <option>General Inquiry</option>
+          <option>Table Reservation</option>
+          <option>Catering / Events</option>
+          <option>Feedback</option>
+          <option>Partnership</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea placeholder="Tell us anything..." id="cf-message"></textarea>
+      </div>
+      <button class="form-submit" onclick="submitForm()">Send Message</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">Saffron<span>Table</span></div>
+        <p>Artisan food crafted with care, delivered to your door.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigate</h4>
+        <a onclick="showPage('home')">Home</a>
+        <a onclick="showPage('menu')">Menu</a>
+        <a onclick="showPage('about')">About</a>
+        <a onclick="showPage('contact')">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2024 Saffron Table. All rights reserved.</div>
+  </footer>
+</div>
+
+<!-- CART DRAWER -->
+<div class="cart-overlay" id="cartOverlay" onclick="handleOverlayClick(event)">
+  <div class="cart-drawer">
+    <div class="cart-head">
+      <h2>Your Order</h2>
+      <button class="cart-close" onclick="closeCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty">
+        <div class="cart-empty-icon">🛒</div>
+        <p>Your cart is empty.<br>Add something delicious!</p>
+      </div>
+    </div>
+    <div class="cart-foot">
+      <div class="cart-total">
+        <span class="cart-total-label">Total</span>
+        <span class="cart-total-val" id="cartTotal">₹0</span>
+      </div>
+      <button class="checkout-btn" onclick="checkout()">Place Order →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon">✦</span>
+  <span id="toastMsg">Added to cart!</span>
+</div>
+
+<!-- ORDER SUCCESS -->
+<div class="order-success" id="orderSuccess">
+  <div class="success-card">
+    <div class="success-icon">🎉</div>
+    <h2>Order Placed!</h2>
+    <p>Thank you for your order. Our kitchen is already getting started. Estimated delivery: <strong>25–35 minutes</strong>.</p>
+    <button class="success-close" onclick="closeSuccess()">Continue Browsing</button>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const dishes = [
+  { id:1, name:'Paneer Tikka', category:'starters', price:249, icon:'🧆', desc:'Charred cottage cheese with mint chutney & onions', badge:'Bestseller', veg:true },
+  { id:2, name:'Crispy Calamari', category:'starters', price:319, icon:'🦑', desc:'Light tempura batter, served with sriracha aioli', badge:null, veg:false },
+  { id:3, name:'Mezze Platter', category:'starters', price:399, icon:'🫙', desc:'Hummus, baba ganoush, falafel & warm pita', badge:'Chef\'s Pick', veg:true },
+  { id:4, name:'Butter Chicken', category:'mains', price:449, icon:'🍛', desc:'Slow-cooked in tomato & cream sauce, best eaten with naan', badge:'Bestseller', veg:false },
+  { id:5, name:'Dal Makhani', category:'mains', price:329, icon:'🍲', desc:'Black lentils simmered overnight with butter and spices', badge:null, veg:true },
+  { id:6, name:'Grilled Sea Bass', category:'mains', price:549, icon:'🐟', desc:'Herb-marinated fillet, lemon butter, served with risotto', badge:'Chef\'s Pick', veg:false },
+  { id:7, name:'Lamb Rogan Josh', category:'mains', price:519, icon:'🍖', desc:'Kashmiri-style slow braised lamb, aromatic and rich', badge:null, veg:false },
+  { id:8, name:'Margherita Pizza', category:'pizza', price:369, icon:'🍕', desc:'San Marzano tomato, buffalo mozzarella, fresh basil', badge:null, veg:true },
+  { id:9, name:'Spicy Pepperoni', category:'pizza', price:449, icon:'🍕', desc:'Double pepperoni, jalapeños, smoked mozzarella', badge:'Bestseller', veg:false },
+  { id:10, name:'Truffle Mushroom', category:'pizza', price:499, icon:'🍕', desc:'Wild mushrooms, truffle oil, fontina cheese', badge:'Chef\'s Pick', veg:true },
+  { id:11, name:'Gulab Jamun Cheesecake', category:'desserts', price:229, icon:'🍮', desc:'New York cheesecake infused with rose syrup & pistachio', badge:'Signature', veg:true },
+  { id:12, name:'Kulfi Brûlée', category:'desserts', price:199, icon:'🍦', desc:'Cardamom custard with caramelised sugar crust', badge:null, veg:true },
+  { id:13, name:'Chocolate Lava Cake', category:'desserts', price:249, icon:'🍫', desc:'Warm dark chocolate, salted caramel ice cream', badge:'Bestseller', veg:true },
+  { id:14, name:'Mango Lassi', category:'drinks', price:129, icon:'🥭', desc:'Thick Alphonso mango blended with chilled yoghurt', badge:null, veg:true },
+  { id:15, name:'Masala Chai Latte', category:'drinks', price:99, icon:'☕', desc:'House-blend spices, ginger, oat milk, served warm', badge:null, veg:true },
+  { id:16, name:'Fresh Coconut Water', category:'drinks', price:89, icon:'🥥', desc:'Young coconut, served chilled with a wedge of lime', badge:null, veg:true },
+];
+
+let cart = JSON.parse(localStorage.getItem('saffron_cart') || '[]');
+let currentFilter = 'all';
+
+// ── UTILS ──
+function saveCart() { localStorage.setItem('saffron_cart', JSON.stringify(cart)); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function updateCartUI() {
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const count = cart.reduce((s, i) => s + i.qty, 0);
+  document.getElementById('cartCount').textContent = count;
+  document.getElementById('cartTotal').textContent = '₹' + total.toLocaleString('en-IN');
+
+  const el = document.getElementById('cartItems');
+  if (!cart.length) {
+    el.innerHTML = '<div class="cart-empty"><div class="cart-empty-icon">🛒</div><p>Your cart is empty.<br>Add something delicious!</p></div>';
+    return;
+  }
+  el.innerHTML = cart.map(item => `
+    <div class="cart-item">
+      <div class="cart-item-icon">${item.icon}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">₹${(item.price * item.qty).toLocaleString('en-IN')}</div>
+      </div>
+      <div class="cart-item-qty">
+        <button class="qty-btn" onclick="updateQty(${item.id},-1)">−</button>
+        <span class="qty-num">${item.qty}</span>
+        <button class="qty-btn" onclick="updateQty(${item.id},1)">+</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addToCart(id) {
+  const dish = dishes.find(d => d.id === id);
+  const existing = cart.find(i => i.id === id);
+  if (existing) existing.qty++;
+  else cart.push({ ...dish, qty: 1 });
+  saveCart(); updateCartUI();
+  showToast(dish.name + ' added to cart!');
+}
+
+function updateQty(id, delta) {
+  const idx = cart.findIndex(i => i.id === id);
+  if (idx === -1) return;
+  cart[idx].qty += delta;
+  if (cart[idx].qty <= 0) cart.splice(idx, 1);
+  saveCart(); updateCartUI();
+}
+
+// ── PAGES ──
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + name);
+  if (navEl) navEl.classList.add('active');
+  window.scrollTo(0, 0);
+  if (name === 'menu') renderMenu('all');
+  closeMobileMenu();
+}
+
+// ── DISH CARD ──
+function dishCard(dish) {
+  return `
+    <div class="dish-card">
+      ${dish.badge ? `<div class="dish-badge">${dish.badge}</div>` : ''}
+      <div class="dish-img-placeholder" style="background:${categoryBg(dish.category)}">${dish.icon}</div>
+      <div class="dish-body">
+        <div class="dish-category">${dish.veg ? '🟢 Veg' : '🔴 Non-Veg'} · ${dish.category}</div>
+        <div class="dish-name">${dish.name}</div>
+        <div class="dish-desc">${dish.desc}</div>
+        <div class="dish-footer">
+          <div class="dish-price">₹${dish.price} <span>/ serving</span></div>
+          <button class="add-btn" onclick="addToCart(${dish.id})">+</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function categoryBg(cat) {
+  const map = { starters:'#fef3e2', mains:'#fce8e8', pizza:'#fff0e0', desserts:'#fce4f0', drinks:'#e8f4fd' };
+  return map[cat] || '#f5f5f5';
+}
+
+// ── HOME ──
+function renderHomeDishes() {
+  const featured = dishes.filter(d => d.badge).slice(0, 6);
+  document.getElementById('homeDishes').innerHTML = featured.map(dishCard).join('');
+}
+
+// ── MENU ──
+function renderMenu(filter) {
+  currentFilter = filter;
+  const filtered = filter === 'all' ? dishes : dishes.filter(d => d.category === filter);
+  document.getElementById('menuGrid').innerHTML = filtered.map(dishCard).join('');
+}
+
+function filterMenu(btn, filter) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMenu(filter);
+}
+
+// ── HOME CAT ──
+function selectCategory(el, cat) {
+  document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  if (cat !== 'all') { showPage('menu'); setTimeout(() => filterMenu(document.querySelector(`.filter-btn[onclick*="${cat}"]`), cat), 100); }
+}
+
+// ── CART ──
+function openCart() {
+  const o = document.getElementById('cartOverlay');
+  o.style.display = 'flex';
+  setTimeout(() => o.classList.add('open'), 10);
+}
+function closeCart() {
+  const o = document.getElementById('cartOverlay');
+  o.classList.remove('open');
+  setTimeout(() => o.style.display = 'none', 350);
+}
+function handleOverlayClick(e) { if (e.target === document.getElementById('cartOverlay')) closeCart(); }
+
+function checkout() {
+  if (!cart.length) { showToast('Add something to your cart first!'); return; }
+  cart = []; saveCart(); updateCartUI(); closeCart();
+  setTimeout(() => document.getElementById('orderSuccess').classList.add('show'), 400);
+}
+function closeSuccess() { document.getElementById('orderSuccess').classList.remove('show'); }
+
+// ── CONTACT ──
+function submitForm() {
+  const f = document.getElementById('cf-fname').value;
+  const e = document.getElementById('cf-email').value;
+  if (!f || !e) { showToast('Please fill in your name and email.'); return; }
+  document.getElementById('cf-fname').value = '';
+  document.getElementById('cf-lname').value = '';
+  document.getElementById('cf-email').value = '';
+  document.getElementById('cf-message').value = '';
+  showToast('Message sent! We\'ll get back to you soon. 🙏');
+}
+
+// ── NAV SCROLL ──
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// ── MOBILE MENU ──
+let menuOpen = false;
+function toggleMobileMenu() {
+  menuOpen = !menuOpen;
+  const links = document.getElementById('navLinks');
+  if (menuOpen) {
+    links.style.display = 'flex';
+    links.style.flexDirection = 'column';
+    links.style.position = 'absolute';
+    links.style.top = '70px';
+    links.style.left = '0';
+    links.style.right = '0';
+    links.style.background = 'var(--cream)';
+    links.style.padding = '1.5rem 2rem';
+    links.style.borderBottom = '1px solid rgba(232,160,32,0.2)';
+    links.style.gap = '1.2rem';
+    links.style.zIndex = '999';
+  } else {
+    closeMobileMenu();
+  }
+}
+function closeMobileMenu() {
+  menuOpen = false;
+  const links = document.getElementById('navLinks');
+  links.removeAttribute('style');
+  if (window.innerWidth <= 768) links.style.display = 'none';
+}
+window.addEventListener('resize', () => { if (window.innerWidth > 768) { document.getElementById('navLinks').removeAttribute('style'); } });
+
+// ── INIT ──
+renderHomeDishes();
+updateCartUI();
+</script>
+</body>
+</html>
